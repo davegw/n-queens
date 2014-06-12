@@ -30,7 +30,7 @@ window.findNRooksSolution = function(n) {
       }
       return;
     }
-    for (var row = 0; row < board.rows().length; row++) {
+    for (var row = numPieces; row < numPieces + 1; row++) {
       for (var col = 0; col < board.rows().length; col++) {
         if (board.rows()[row][col] !== 1) {
           // Create a copy of the current board to avoid mutation.
@@ -45,7 +45,7 @@ window.findNRooksSolution = function(n) {
     }
   };
   solveBoard(initialBoard, 0);
-  var solution = solutions.length || null;
+  var solution = solutions || null;
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
