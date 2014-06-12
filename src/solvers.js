@@ -16,29 +16,36 @@
 window.findNRooksSolution = function(n) {
   var solutions = [];
   var initialBoard = new Board({n: n});
+  var storage = {};
   var solveBoard = function(board, numPieces) {
+    // Base case is reached when we hit the number of inputs.
+    var boardKey = JSON.stringify(board.rows());
+    if (storage[boardKey]) {
+      return;
+    }
+    storage[boardKey] = true;
     if (numPieces === n) {
       if (!board.hasAnyRooksConflicts()) {
         solutions.push(board.rows());
       }
-    } else {
-      for (var row = 0; row < board.rows().length; row++) {
-        for (var col = 0; col < board.rows().length; col++) {
-          if (board.rows()[row][col] !== 1) {
-            var copyBoard = _.map(board.rows(), function(item){
-              return item.slice();
-            });
-            var newBoard = new Board(copyBoard);
-            newBoard.togglePiece(row, col);
-            solveBoard(newBoard, numPieces + 1);
-          }
+      return;
+    }
+    for (var row = 0; row < board.rows().length; row++) {
+      for (var col = 0; col < board.rows().length; col++) {
+        if (board.rows()[row][col] !== 1) {
+          // Create a copy of the current board to avoid mutation.
+          var copyBoard = _.map(board.rows(), function(item){
+            return item.slice();
+          });
+          var newBoard = new Board(copyBoard);
+          newBoard.togglePiece(row, col);
+          solveBoard(newBoard, numPieces + 1);
         }
       }
-
     }
   };
   solveBoard(initialBoard, 0);
-  var solution = solutions[0] || null;
+  var solution = solutions.length || null;
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
