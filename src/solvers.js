@@ -39,7 +39,7 @@ window.findNRooksSolution = function(n) {
     }
   };
   solveBoard(initialBoard.rows(), 0, {});
-  var solution = solutions[0] || null;
+  var solution = solutions[0] || initialBoard.rows();
   console.log((new Date() - a)/1000);
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
@@ -59,7 +59,40 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var a = new Date();
+  var solutions = [];
+  var initialBoard = new Board({n: n});
+  var solveBoard = function(board, numPieces, usedCols, usedDiags) {
+    // Base case is reached when we hit the number of inputs.
+    if (numPieces === n) {
+      solutions.push(board);
+      return;
+    }
+    for (var row = numPieces; row < numPieces + 1; row++) {
+      for (var col = 0; col < n; col++) {
+        if (board[row][col] !== 1 && usedCols[col] === undefined && usedDiags[[row, col]] === undefined) {
+          // Create a copy of the current board to avoid mutation.
+          var newBoard = _.map(board, function(item){
+            return item.slice();
+          });
+          newBoard[row][col] = 1;
+          var copyCol = Object.create(usedCols);
+          copyCol[col] = true;
+          var copyDiags = Object.create(usedDiags);
+          for (var diagPos = 1; diagPos < (n - row); diagPos++) {
+            var majorDiagKey = [(row + diagPos), (col + diagPos)];
+            copyDiags[majorDiagKey] = true;
+            var minorDiagKey = [(row + diagPos), (col - diagPos)];
+            copyDiags[minorDiagKey] = true;
+          }
+          solveBoard(newBoard, numPieces + 1, copyCol, copyDiags);
+        }
+      }
+    }
+  };
+  solveBoard(initialBoard.rows(), 0, {}, {});
+  var solution = solutions[0] || initialBoard.rows();
+  console.log((new Date() - a)/1000);
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
