@@ -16,18 +16,10 @@
 window.findNRooksSolution = function(n) {
   var solutions = [];
   var initialBoard = new Board({n: n});
-  var storage = {};
   var solveBoard = function(board, numPieces, usedCols) {
     // Base case is reached when we hit the number of inputs.
-    var boardKey = JSON.stringify(board.rows());
-    if (storage[boardKey]) {
-      return;
-    }
-    storage[boardKey] = true;
     if (numPieces === n) {
-      if (!board.hasAnyRooksConflicts()) {
-        solutions.push(board.rows());
-      }
+      solutions.push(board.rows());
       return;
     }
     for (var row = numPieces; row < numPieces + 1; row++) {
@@ -47,7 +39,7 @@ window.findNRooksSolution = function(n) {
     }
   };
   solveBoard(initialBoard, 0, {});
-  var solution = solutions.length || null;
+  var solution = solutions[0] || null;
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
