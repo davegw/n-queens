@@ -20,18 +20,17 @@ window.findNRooksSolution = function(n) {
   var solveBoard = function(board, numPieces, usedCols) {
     // Base case is reached when we hit the number of inputs.
     if (numPieces === n) {
-      solutions.push(board.rows());
+      solutions.push(board);
       return;
     }
     for (var row = numPieces; row < numPieces + 1; row++) {
       for (var col = 0; col < n; col++) {
-        if (board.rows()[row][col] !== 1 && usedCols[col] === undefined) {
+        if (board[row][col] !== 1 && usedCols[col] === undefined) {
           // Create a copy of the current board to avoid mutation.
-          var copyBoard = _.map(board.rows(), function(item){
+          var newBoard = _.map(board, function(item){
             return item.slice();
           });
-          var newBoard = new Board(copyBoard);
-          newBoard.togglePiece(row, col);
+          newBoard[row][col] = 1;
           var copyCol = Object.create(usedCols);
           copyCol[col] = true;
           solveBoard(newBoard, numPieces + 1, copyCol);
@@ -39,7 +38,7 @@ window.findNRooksSolution = function(n) {
       }
     }
   };
-  solveBoard(initialBoard, 0, {});
+  solveBoard(initialBoard.rows(), 0, {});
   var solution = solutions[0] || null;
   console.log((new Date() - a)/1000);
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
