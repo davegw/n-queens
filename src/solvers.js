@@ -80,10 +80,16 @@ window.findNQueensSolution = function(n) {
           copyCol[col] = true;
           var copyDiags = Object.create(usedDiags);
           for (var diagPos = 1; diagPos < (n - row); diagPos++) {
-            var majorDiagKey = [(row + diagPos), (col + diagPos)];
-            copyDiags[majorDiagKey] = true;
-            var minorDiagKey = [(row + diagPos), (col - diagPos)];
-            copyDiags[minorDiagKey] = true;
+            var majorDiag = col + diagPos;
+            var minorDiag = col - diagPos;
+            if (minorDiag < n) {
+              var majorDiagKey = [(row + diagPos), (majorDiag)];
+              copyDiags[majorDiagKey] = true;
+            }
+            if (minorDiag >= 0) {
+              var minorDiagKey = [(row + diagPos), (minorDiag)];
+              copyDiags[minorDiagKey] = true;
+            }
           }
           solveBoard(newBoard, numPieces + 1, copyCol, copyDiags);
         }
@@ -91,7 +97,7 @@ window.findNQueensSolution = function(n) {
     }
   };
   solveBoard(initialBoard.rows(), 0, {}, {});
-  var solution = solutions[0] || initialBoard.rows();
+  var solution = solutions.length || initialBoard.rows();
   console.log((new Date() - a)/1000);
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
