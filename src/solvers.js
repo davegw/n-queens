@@ -75,6 +75,7 @@ window.findNQueensSolution = function(n) {
     // i.e. If we've placed three pieces we'll be on the fourth row (index position 3).
     var row = numPieces;
     var colLength = n;
+    // Prevents calculation of mirror image solutions by only searching half of first row.
     if(row === 0) {
       colLength = Math.floor(n/2);
     }
@@ -109,17 +110,20 @@ window.findNQueensSolution = function(n) {
       }
     }
   };
-
+  // Only solve first half of first row to eliminate duplicates, then double the solution count.
   solveBoard(emptyBoard.rows(), 0, {}, {});
   solutions *= 2;
+
+  // When n is odd, handle middle column. Count solutions once as this branch has no mirror image.
   if (n % 2 === 1) {
-    var middleCol = Math.floor(n/2)
+    var middleCol = Math.floor(n/2);
+    // Defines recursive branch to be followed.
     emptyBoard.rows()[0][middleCol] = 1;
-    console.log(emptyBoard.rows());
     var usedCols = {};
     usedCols[middleCol] = true;
     var usedDiags = {};
     updateDiagConflicts(usedDiags, 0, middleCol);
+    // Set board to state where one piece has been placed in the middle column of first row.
     solveBoard(emptyBoard.rows(), 1, usedCols, usedDiags);
   }
   // Return an empty n x n board if no solution found.
