@@ -60,7 +60,7 @@ window.countNRooksSolutions = function(n) {
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var startTime = new Date();
-  var solutions = [];
+  var solutions = 0;
   // New Board is defined in Board.js. It is being used here to create an empty array.
   var emptyBoard = new Board({n: n});
 
@@ -68,13 +68,17 @@ window.findNQueensSolution = function(n) {
   var solveBoard = function(board, numPieces, usedCols, usedDiags) {
     // Base case is reached when the final piece is placed.
     if (numPieces === n) {
-      return solutions.push(board);
+      return solutions++;
     }
 
     // Only one piece is placed per row. Each row is evaluated separately based on the piece number currently being placed.
     // i.e. If we've placed three pieces we'll be on the fourth row (index position 3).
     var row = numPieces;
-    for (var col = 0; col < n; col++) {
+    var colLength = n;
+    if(row === 0) {
+      colLength = Math.floor(n/2);
+    }
+    for (var col = 0; col < colLength; col++) {
       if (usedCols[col] === undefined && usedDiags[[row, col]] === undefined) {
         board[row][col] = 1;
         usedCols[col] = true;
@@ -107,8 +111,19 @@ window.findNQueensSolution = function(n) {
   };
 
   solveBoard(emptyBoard.rows(), 0, {}, {});
+  solutions *= 2;
+  if (n % 2 === 1) {
+    var middleCol = Math.floor(n/2)
+    emptyBoard.rows()[0][middleCol] = 1;
+    console.log(emptyBoard.rows());
+    var usedCols = {};
+    usedCols[middleCol] = true;
+    var usedDiags = {};
+    updateDiagConflicts(usedDiags, 0, middleCol);
+    solveBoard(emptyBoard.rows(), 1, usedCols, usedDiags);
+  }
   // Return an empty n x n board if no solution found.
-  var solution = solutions.length || emptyBoard.rows();
+  var solution = solutions || emptyBoard.rows();
   console.log((new Date() - startTime)/1000);
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
