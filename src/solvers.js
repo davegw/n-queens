@@ -72,12 +72,8 @@ window.findNQueensSolution = function(n) {
       for (var col = 0; col < n; col++) {
         if (board[row][col] !== 1 && usedCols[col] === undefined && usedDiags[[row, col]] === undefined) {
           // Create a copy of the current board to avoid mutation.
-          var newBoard = _.map(board, function(item){
-            return item.slice();
-          });
-          newBoard[row][col] = 1;
-          var copyCol = Object.create(usedCols);
-          copyCol[col] = true;
+          board[row][col] = 1;
+          usedCols[col] = true;
           var copyDiags = Object.create(usedDiags);
           for (var diagPos = 1; diagPos < (n - row); diagPos++) {
             var majorDiag = col + diagPos;
@@ -91,7 +87,9 @@ window.findNQueensSolution = function(n) {
               copyDiags[minorDiagKey] = true;
             }
           }
-          solveBoard(newBoard, numPieces + 1, copyCol, copyDiags);
+          solveBoard(board, numPieces + 1, usedCols, copyDiags);
+          board[row][col] = 0;
+          delete usedCols[col];
         }
       }
     }
